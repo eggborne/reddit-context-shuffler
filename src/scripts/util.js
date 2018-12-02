@@ -1,4 +1,13 @@
-export function pointWithinBounds(pointX, pointY, boundsX, boundsY, boundsWidth, boundsHeight = boundsWidth) {
-  return pointX > boundsX && pointX < boundsX + boundsWidth
-    && pointY > boundsY && pointY < boundsY + boundsHeight;
+export function shuffleArray(arr) {
+  let ctr = arr.length;
+  let temp;
+  let index;
+  while (ctr > 0) {
+      index = Math.floor(Math.random() * ctr);
+      ctr--;
+      temp = arr[ctr];
+      arr[ctr] = arr[index];
+      arr[index] = temp;
+  }
+  return arr;
 }
