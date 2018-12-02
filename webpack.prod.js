@@ -70,7 +70,7 @@ module.exports = {
   },
   output: {
     path: resolve(__dirname, 'dist'),
-    publicPath: 'https://www.eggborne.com/reddit-context-shuffler/dist/',
+    publicPath: 'https://www.eggborne.com/rcs/dist/',
     filename: 'app.bundle.js'
   }
 };
