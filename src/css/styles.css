@@ -18,18 +18,17 @@ body {
   width: 95vmin;
   border-radius: 0.25rem;
   border: 1px solid gray;
-  /* margin: 2.5vmin; */
-  padding: 0.25rem;
+  padding: 0.5rem 0.25rem 0.5rem 0.25rem;
 }
 .post-caption {
   box-sizing: border-box;
-  width: 80%;
+  width: 95vmin;
   background-color: rgba(0, 0, 0, 0.8);
   color: white;
-  padding: 4.5vmin;
+  padding: 4vmin;
   position: absolute;
-  bottom: 1.5rem;
-  border-radius: 0.5rem;
+  bottom: 2.5vmin;
+  /* border-radius: 0.5rem; */
 }
 #container {
   display: flex;
