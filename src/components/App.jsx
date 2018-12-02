@@ -5,6 +5,7 @@ import Gallery from './Gallery';
 import Footer from './Footer';
 import init from '../scripts/init';
 import axios from 'axios';
+let Util = require('../scripts/util.js');
 
 const imageArray = [];
 const captionArray = [];
@@ -36,7 +37,8 @@ class App extends React.Component {
       url: `https://www.reddit.com/r/${subreddit}/hot/.json`
 
     }).then(function (response) {
-      Array.from(response.data.data.children).map((post) => {
+      let shuffledArray = Util.shuffleArray(Array.from(response.data.data.children));
+      shuffledArray.map((post) => {
         imageArray.push(post.data.url);
       });
       self.setState({
@@ -51,7 +53,8 @@ class App extends React.Component {
       url: `https://www.reddit.com/r/${subreddit}/comments/.json`
 
     }).then(function (response) {
-      Array.from(response.data.data.children).map((post) => {
+      let shuffledArray = Util.shuffleArray(Array.from(response.data.data.children));
+      shuffledArray.map((post) => {
         if (post.data.body.length < 75) {
           captionArray.push(post.data.body);
         } else {
