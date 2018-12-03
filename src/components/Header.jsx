@@ -22,16 +22,39 @@ function Header(props) {
           r/{props.sources.comments}
         </div>
       </div>
-      <form onSubmit={props.onClickReload}>
+      <form onSubmit={props.onClickReload} autoComplete='off'>
         <div id='header-lower-area'>
           <div className='input-area'>
-            <input id='image-source-input' type='text' name="reddit-source" placeholder='image source'></input>
-            <button id='random-image-button' onClick={props.onClickRandomImageSource} className='random-button'>Random</button>
+            <input list='image-sources' id='image-source-input' type='text' name="reddit-source" placeholder='image source'></input>
+            <button form='none' id='random-image-button' onClick={props.onClickRandomImageSource} className='random-button'>Random</button>
           </div>
           <div className='input-area'>
-            <input id='comment-source-input' type='text' name="reddit-source" placeholder='comment source'></input>
-            <button id='random-comment-button' onClick={props.onClickRandomCommentSource} className='random-button'>Random</button>
+            <input list='comment-sources' id='comment-source-input' type='text' name="reddit-source" placeholder='comment source'></input>
+            <button form='none' id='random-comment-button' onClick={props.onClickRandomCommentSource} className='random-button'>Random</button>
           </div>
+          <datalist id='image-sources'>
+            <option value='hmmm' />
+            <option value='catsstandingup' />
+            <option value='aww' />
+            <option value='wtf' />
+            <option value='doggos' />
+            <option value='mildlyinteresting' />
+            <option value='trashy' />
+            <option value='retrogaming' />
+            <option value='motorcycles' />
+            <option value='squaredcircle' />
+          </datalist>
+          <datalist id='comment-sources'>
+            <option value='gonewild' />
+            <option value='hotasianmilfs' />
+            <option value='chocolatemilf' />
+            <option value='pantyhose' />
+            <option value='cameltoe' />
+            <option value='hungrybutts' />
+            <option value='boltedondicks' />
+            <option value='celebcumsluts' />
+            <option value='ass' />
+          </datalist>
           <button id='reload-button'>Refresh</button>
         </div>
       </form>
