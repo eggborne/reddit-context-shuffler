@@ -5,10 +5,44 @@ import Gallery from './Gallery';
 import Footer from './Footer';
 import init from '../scripts/init';
 import axios from 'axios';
+import { EventEmitter } from 'events';
 let Util = require('../scripts/util.js');
 
 const imageArray = [];
 const captionArray = [];
+
+const collapsedMenuHeight = '3.5rem';
+const menuHeight = '19.5rem';
+
+const randomImageSources = [
+  'hmmm',
+  'earthporn',
+  'catsstandingup',
+  'aww',
+  'sneks',
+  'wtf',
+  'discgolf',
+  'mildlyinteresting',
+  'trees',
+  'trashy',
+  'cosplay',
+  'retrogaming'
+];
+const randomCommentSources = [
+  'gonewild',
+  'gonewildplus',
+  'hotasianmilfs',
+  'chocolatemilf',
+  'sockgirls',
+  'pantyhose',
+  'cameltoe',
+  'hungrybutts',
+  'hentaibondage',
+  'celebcumsluts',
+  'boltedondicks',
+  'hairbra',
+  'ass'
+];
 
 let shorterDimension;
 window.innerWidth < window.innerHeight
@@ -19,19 +53,27 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      sources: {
+        images: randomImageSources[Util.randomInt(0, randomImageSources.length-1)],
+        comments: randomCommentSources[Util.randomInt(0, randomCommentSources.length-1)]
+      },
       imageArray: [],
       captionArray: []
     };
 
     this.getImages = this.getImages.bind(this);
+    this.handleHamburgerClick = this.handleHamburgerClick.bind(this);
+    this.handleReloadClick = this.handleReloadClick.bind(this);
+    this.handleClickRandomImageSource = this.handleClickRandomImageSource.bind(this);
+    this.handleClickRandomCommentSource = this.handleClickRandomCommentSource.bind(this);
   }
-
   componentDidMount() {
     console.log('App mounted');
-    init(this);
+    this.getImages(this, this.state.sources.images);
+    this.getCaptions(this, this.state.sources.comments);
   }
 
-  getImages(self, subreddit) {
+  getImages(self, subreddit, replace) {
     axios({
       method: 'get',
       url: `https://www.reddit.com/r/${subreddit}/hot/.json`
@@ -39,15 +81,23 @@ class App extends React.Component {
     }).then(function (response) {
       let shuffledArray = Util.shuffleArray(Array.from(response.data.data.children));
       shuffledArray.map((post) => {
-        imageArray.push(post.data.url);
+        let ext = post.data.url.substring(post.data.url.length - 3, post.data.url.length);
+        if (ext === 'jpg' || ext === 'png' || ext === 'peg') {
+          if (replace) {
+            imageArray.unshift(post.data.url);
+          } else {
+            imageArray.push(post.data.url);
+          }
+        } else {
+          console.log(`rejecting ${post.data.url}`);
+        }
       });
       self.setState({
         imageArray: imageArray
       });
     });
   }
-
-  getCaptions(self, subreddit) {
+  getCaptions(self, subreddit, replace) {
     axios({
       method: 'get',
       url: `https://www.reddit.com/r/${subreddit}/comments/.json`
@@ -55,8 +105,12 @@ class App extends React.Component {
     }).then(function (response) {
       let shuffledArray = Util.shuffleArray(Array.from(response.data.data.children));
       shuffledArray.map((post) => {
-        if (post.data.body.length < 75) {
-          captionArray.push(post.data.body);
+        if (post.data.body.length < 120) {
+          if (replace) {
+            captionArray.unshift(post.data.body);
+          } else {
+            captionArray.push(post.data.body);
+          }
         } else {
           captionArray.push(`TOO LONG AT ${post.data.body.length}: ${post.data.body}`);
         }
@@ -66,14 +120,63 @@ class App extends React.Component {
       });
     });
   }
+  
+  handleHamburgerClick(event) {
+    event.preventDefault();
+    if (document.getElementById('header').style.height !== menuHeight) {
+      document.getElementById('header').style.height = menuHeight;
+      document.getElementById('hamburger').style.transform = 'rotate(-90deg)';
+      document.getElementById('hamburger-bar-1').style.transform = 'rotate(40deg) scaleX(0.8) translateX(0.9rem)';
+      document.getElementById('hamburger-bar-3').style.transform = 'rotate(-40deg) scaleX(0.8) translateX(0.9rem)';
+    } else {
+      document.getElementById('header').style.height = collapsedMenuHeight;
+      document.getElementById('hamburger').style.transform = 'none';
+      document.getElementById('hamburger-bar-1').style.transform = 'none';
+      document.getElementById('hamburger-bar-3').style.transform = 'none';
+    
+    }
+  }
+
+  handleReloadClick(event) {
+    event.preventDefault();
+    let source = Array.from(document.getElementsByName('reddit-source'));
+    let newSources = {
+      images: source[0].value,
+      comments: source[1].value
+    };
+    this.setState({
+      sources: newSources
+    });
+    this.getImages(this, source[0].value, true);
+    this.getCaptions(this, source[1].value, true);
+  }
+
+  handleClickRandomImageSource() {
+    event.preventDefault();
+    let source = Array.from(document.getElementsByName('reddit-source'));
+    let newValue = randomImageSources[Util.randomInt(0, randomImageSources.length - 1)];
+    source[0].value = newValue;
+  }
+
+  handleClickRandomCommentSource() {
+    event.preventDefault();
+    let source = Array.from(document.getElementsByName('reddit-source'));
+    let newValue = randomCommentSources[Util.randomInt(0, randomCommentSources.length - 1)];
+    source[1].value = newValue;
+  }
+
 
   render() {
     return (
       <div id='container'>
-        <Header />
+        <Header sources={this.state.sources}
+          onHamburgerClick={this.handleHamburgerClick}
+          onClickReload={this.handleReloadClick}
+          onClickRandomImageSource={this.handleClickRandomImageSource}
+          onClickRandomCommentSource={this.handleClickRandomCommentSource} />
         <div id='main'>
-          <Gallery imageArray={imageArray}
-            captionArray={captionArray} />
+          <Gallery imageArray={this.state.imageArray}
+            captionArray={this.state.captionArray} />
         </div>
         <Footer />
       </div>
