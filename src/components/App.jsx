@@ -121,7 +121,7 @@ class App extends React.Component {
       self.setState({
         imageArray: imageArray
       });
-      console.warn('IMAGEARRAY LENGTH', self.state.imageArray.length)
+      console.warn('IMAGEARRAY LENGTH', self.state.imageArray.length);
     });
   }
   getCaptions(self, subreddit, replace) {
@@ -145,14 +145,13 @@ class App extends React.Component {
       self.setState({
         captionArray: captionArray
       });
-      console.warn('CAPTIONARRAY LENGTH', self.state.captionArray.length)
-
+      console.warn('CAPTIONARRAY LENGTH', self.state.captionArray.length);
     });
   }
 
   handleScroll() {
-    let downLimit = window.innerWidth * 0.2
-    let upLimit = window.innerWidth * 0.2
+    let downLimit = window.innerWidth * 0.2;
+    let upLimit = window.innerWidth * 0.2;
     let menuOpen = document.getElementById('header').style.height === menuHeight;
     if (menuOpen) {
       upLimit *= 3.5; 
