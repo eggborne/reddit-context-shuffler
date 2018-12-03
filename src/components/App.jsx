@@ -18,59 +18,28 @@ const randomImageSources = [
   'hmmm',
   'catsstandingup',
   'aww',
-  'sneks',
   'wtf',
-  'discgolf',
+  'doggos',
   'mildlyinteresting',
-  'trees',
   'trashy',
-  'cosplay',
-  'retrogaming'
+  'retrogaming',
+  'motorcycles',
+  'squaredcircle'
 ];
 const randomCommentSources = [
   'gonewild',
   'gonewildplus',
   'hotasianmilfs',
   'chocolatemilf',
-  'sockgirls',
   'pantyhose',
   'cameltoe',
   'hungrybutts',
-  'celebcumsluts',
   'boltedondicks',
+  'celebcumsluts',
   'ass',
-  'assholesbehindthongs',
-
 ];
 
-let previousScrollY;
-// window.onscroll = function () {
-//   let currentScrollY = window.pageYOffset;
-//   if (currentScrollY < previousScrollY) {
-//     // swiping down
-//     if (currentScrollY < window.innerWidth * 0.2) {
-//       if (document.getElementById('up-button').classList.contains('on-screen')) {
-//         document.getElementById('up-button').classList.remove('on-screen');
-//         if (document.getElementById('header').style.height === menuHeight) {
-//           this.handleHamburgerClick();
-//         }
-//       }
-//     }
-//   } else {
-//     // swiping up
-//     if (currentScrollY > window.innerWidth * 0.2) {
-//       if (!document.getElementById('up-button').classList.contains('on-screen')) {
-//         document.getElementById('up-button').classList.add('on-screen');
-//       }
-//     }
-//   }
-//   previousScrollY = currentScrollY;
-// }
-
-let shorterDimension;
-window.innerWidth < window.innerHeight
-  ? shorterDimension = window.innerWidth
-  : shorterDimension = window.innerHeight;
+// let previousScrollY;
 
 class App extends React.Component {
   constructor(props) {
@@ -83,6 +52,8 @@ class App extends React.Component {
       imageArray: [],
       captionArray: []
     };
+
+    this.previousScrollY = 0;
 
     this.getImages = this.getImages.bind(this);
     this.handleScroll = this.handleScroll.bind(this);
@@ -100,6 +71,9 @@ class App extends React.Component {
   }
 
   getImages(self, subreddit, replace) {
+    if (replace) {
+      imageArray.length = 0;
+    }
     axios({
       method: 'get',
       url: `https://www.reddit.com/r/${subreddit}/hot/.json`
@@ -109,22 +83,21 @@ class App extends React.Component {
       shuffledArray.map((post) => {
         let ext = post.data.url.substring(post.data.url.length - 3, post.data.url.length);
         if (ext === 'jpg' || ext === 'png' || ext === 'peg' || ext === 'gif' || ext === 'mp4') {
-          if (replace) {
-            imageArray.unshift(post.data.url);
-          } else {
-            imageArray.push(post.data.url);
-          }
+          imageArray.push(post.data.url); 
         } else {
-          // console.log(`rejecting for last three char ${ext} -- ${post.data.url}`);
+          console.log(`rejecting for EXT ${ext} -- ${post.data.url}`);
         }
       });
       self.setState({
         imageArray: imageArray
       });
-      console.warn('IMAGEARRAY LENGTH', self.state.imageArray.length);
+      console.warn('IMAGEARRAY LENGTH', self.state.imageArray.length, self.state.imageArray);
     });
   }
   getCaptions(self, subreddit, replace) {
+    if (replace) {
+      captionArray.length = 0
+    }
     axios({
       method: 'get',
       url: `https://www.reddit.com/r/${subreddit}/comments/.json`
@@ -132,20 +105,18 @@ class App extends React.Component {
     }).then(function (response) {
       let shuffledArray = Util.shuffleArray(Array.from(response.data.data.children));
       shuffledArray.map((post) => {
-        if (post.data.body.length < 120) {
-          if (replace) {
-            captionArray.unshift(post.data.body);
-          } else {
-            captionArray.push(post.data.body);
-          }
+        let body = post.data.body
+        let length = body.length;
+        if (body.split(' ').length > 2 && length > 12 && length < 120) {
+          captionArray.push(body);
         } else {
-          // captionArray.push(`TOO LONG AT ${post.data.body.length}: ${post.data.body}`);
+          console.log(`rejecting for WRONG LENGTH/WORDS: ${post.data.body}`);
         }
       });
       self.setState({
         captionArray: captionArray
       });
-      console.warn('CAPTIONARRAY LENGTH', self.state.captionArray.length);
+      console.warn('CAPTIONARRAY LENGTH', self.state.captionArray.length, self.state.captionArray);
     });
   }
 
@@ -158,7 +129,7 @@ class App extends React.Component {
       downLimit *= 3.5; 
     }
     let currentScrollY = window.pageYOffset;
-    if (currentScrollY < previousScrollY) {
+    if (currentScrollY < this.previousScrollY) {
       // swiping down
       if (currentScrollY <= downLimit) {
         if (document.getElementById('up-button').classList.contains('on-screen')) {
@@ -173,7 +144,7 @@ class App extends React.Component {
         }
       }
     }
-    previousScrollY = currentScrollY;
+    this.previousScrollY = currentScrollY;
   }
   
   handleHamburgerClick(event) {
