@@ -39,6 +39,7 @@ button {
   padding: 0.5rem 0.25rem 0.5rem 0.25rem;
 }
 .post-caption {
+  word-wrap: break-word;
   box-sizing: border-box;
   width: 95vmin;
   background-color: rgba(0, 0, 0, 0.8);
