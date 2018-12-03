@@ -30,24 +30,25 @@ button {
   align-items: center;
   position: relative;
   margin-top: 0.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 .post-image {
   width: 95vmin;
   border-radius: 0.25rem;
   border: 1px solid #444444;
-  padding: 0.5rem 0.25rem 0.5rem 0.25rem;
+  padding: 0.25rem 0.25rem 0.25rem 0.25rem;
 }
 .post-caption {
   word-wrap: break-word;
   box-sizing: border-box;
-  width: 95vmin;
+  width: 90vmin;
   background-color: rgba(0, 0, 0, 0.8);
   color: white;
   padding: 1rem;
   position: absolute;
-  bottom: 0.5rem;
-  /* border-radius: 0.5rem; */
+  bottom: 1rem;
+  /* padding-top: 3rem; */
+  border-radius: 0.5rem;
 }
 #container {
   display: flex;
@@ -55,6 +56,26 @@ button {
 }
 #main {
   min-height: 100vh;
+  /* margin-top: 3.5rem; */
+}
+#up-button {
+  position: fixed;
+  font-size: 3.5rem;
+  color: #ddd;
+  border-radius: 50%;
+  background-color: #222;
+  opacity: 0.9;
+  width: 3.5rem;
+  height: 3.5rem;
+  bottom: -3.5rem;
+  right: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 300ms ease;
+}
+.on-screen {
+  bottom: 1rem !important;
 }
 #header {
   box-sizing: border-box;
@@ -156,7 +177,7 @@ button {
 .hamburger-bar {
   width: 1.75rem;
   height: 0.25rem;
-  background-color: #777;
+  background-color: #ddd;
   transition: all 400ms ease;
 }
 #hamburger-bar-1 {
