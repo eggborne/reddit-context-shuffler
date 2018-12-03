@@ -197,6 +197,14 @@ class App extends React.Component {
   handleReloadClick(event) {
     event.preventDefault();
     let source = Array.from(document.getElementsByName('reddit-source'));
+    if (!source[0].value) {
+      let randomSource = randomImageSources[Util.randomInt(0, randomImageSources.length - 1)];
+      source[0].value = randomSource;
+    }
+    if (!source[1].value) {
+      let randomSource = randomCommentSources[Util.randomInt(0, randomCommentSources.length - 1)];
+      source[1].value = randomSource;
+    }
     let newSources = {
       images: source[0].value,
       comments: source[1].value
