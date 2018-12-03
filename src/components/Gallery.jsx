@@ -5,7 +5,7 @@ function Gallery(props) {
   return (
     <div id='gallery'>
       {props.imageArray.map((imageUrl, i) => {
-        if (imageUrl.length) {
+        if (imageUrl.length && props.captionArray[i]) {
           return (
             <div className='post-display' key={i}>
               <img className='post-image' src={imageUrl}></img>
