@@ -16,7 +16,6 @@ const menuHeight = '19.5rem';
 
 const randomImageSources = [
   'hmmm',
-  'earthporn',
   'catsstandingup',
   'aww',
   'sneks',
@@ -37,12 +36,36 @@ const randomCommentSources = [
   'pantyhose',
   'cameltoe',
   'hungrybutts',
-  'hentaibondage',
   'celebcumsluts',
   'boltedondicks',
-  'hairbra',
-  'ass'
+  'ass',
+  'assholesbehindthongs',
+
 ];
+
+let previousScrollY;
+// window.onscroll = function () {
+//   let currentScrollY = window.pageYOffset;
+//   if (currentScrollY < previousScrollY) {
+//     // swiping down
+//     if (currentScrollY < window.innerWidth * 0.2) {
+//       if (document.getElementById('up-button').classList.contains('on-screen')) {
+//         document.getElementById('up-button').classList.remove('on-screen');
+//         if (document.getElementById('header').style.height === menuHeight) {
+//           this.handleHamburgerClick();
+//         }
+//       }
+//     }
+//   } else {
+//     // swiping up
+//     if (currentScrollY > window.innerWidth * 0.2) {
+//       if (!document.getElementById('up-button').classList.contains('on-screen')) {
+//         document.getElementById('up-button').classList.add('on-screen');
+//       }
+//     }
+//   }
+//   previousScrollY = currentScrollY;
+// }
 
 let shorterDimension;
 window.innerWidth < window.innerHeight
@@ -62,13 +85,16 @@ class App extends React.Component {
     };
 
     this.getImages = this.getImages.bind(this);
+    this.handleScroll = this.handleScroll.bind(this);
     this.handleHamburgerClick = this.handleHamburgerClick.bind(this);
     this.handleReloadClick = this.handleReloadClick.bind(this);
     this.handleClickRandomImageSource = this.handleClickRandomImageSource.bind(this);
     this.handleClickRandomCommentSource = this.handleClickRandomCommentSource.bind(this);
+    this.handleTopButtonClick = this.handleTopButtonClick.bind(this);
   }
   componentDidMount() {
     console.log('App mounted');
+    window.onscroll = this.handleScroll;
     this.getImages(this, this.state.sources.images);
     this.getCaptions(this, this.state.sources.comments);
   }
@@ -82,19 +108,20 @@ class App extends React.Component {
       let shuffledArray = Util.shuffleArray(Array.from(response.data.data.children));
       shuffledArray.map((post) => {
         let ext = post.data.url.substring(post.data.url.length - 3, post.data.url.length);
-        if (ext === 'jpg' || ext === 'png' || ext === 'peg') {
+        if (ext === 'jpg' || ext === 'png' || ext === 'peg' || ext === 'gif' || ext === 'mp4') {
           if (replace) {
             imageArray.unshift(post.data.url);
           } else {
             imageArray.push(post.data.url);
           }
         } else {
-          console.log(`rejecting ${post.data.url}`);
+          // console.log(`rejecting for last three char ${ext} -- ${post.data.url}`);
         }
       });
       self.setState({
         imageArray: imageArray
       });
+      console.warn('IMAGEARRAY LENGTH', self.state.imageArray.length)
     });
   }
   getCaptions(self, subreddit, replace) {
@@ -112,17 +139,48 @@ class App extends React.Component {
             captionArray.push(post.data.body);
           }
         } else {
-          captionArray.push(`TOO LONG AT ${post.data.body.length}: ${post.data.body}`);
+          // captionArray.push(`TOO LONG AT ${post.data.body.length}: ${post.data.body}`);
         }
       });
       self.setState({
         captionArray: captionArray
       });
+      console.warn('CAPTIONARRAY LENGTH', self.state.captionArray.length)
+
     });
+  }
+
+  handleScroll() {
+    let downLimit = window.innerWidth * 0.2
+    let upLimit = window.innerWidth * 0.2
+    let menuOpen = document.getElementById('header').style.height === menuHeight;
+    if (menuOpen) {
+      upLimit *= 3.5; 
+      downLimit *= 3.5; 
+    }
+    let currentScrollY = window.pageYOffset;
+    if (currentScrollY < previousScrollY) {
+      // swiping down
+      if (currentScrollY <= downLimit) {
+        if (document.getElementById('up-button').classList.contains('on-screen')) {
+          document.getElementById('up-button').classList.remove('on-screen');  
+        }
+      }
+    } else {
+      // swiping up
+      if (currentScrollY > upLimit) {
+        if (!document.getElementById('up-button').classList.contains('on-screen')) {
+          document.getElementById('up-button').classList.add('on-screen');
+        }
+      }
+    }
+    previousScrollY = currentScrollY;
   }
   
   handleHamburgerClick(event) {
-    event.preventDefault();
+    if (event) {
+      event.preventDefault();
+    }
     if (document.getElementById('header').style.height !== menuHeight) {
       document.getElementById('header').style.height = menuHeight;
       document.getElementById('hamburger').style.transform = 'rotate(-90deg)';
@@ -149,6 +207,7 @@ class App extends React.Component {
     });
     this.getImages(this, source[0].value, true);
     this.getCaptions(this, source[1].value, true);
+
   }
 
   handleClickRandomImageSource() {
@@ -165,6 +224,18 @@ class App extends React.Component {
     source[1].value = newValue;
   }
 
+  handleTopButtonClick() {
+    document.getElementById('up-button').classList.remove('on-screen');  
+    // expand menu if not already
+    if (document.getElementById('header').style.height !== menuHeight) {
+      this.handleHamburgerClick();
+    }
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }
+
 
   render() {
     return (
@@ -178,6 +249,7 @@ class App extends React.Component {
           <Gallery imageArray={this.state.imageArray}
             captionArray={this.state.captionArray} />
         </div>
+        <div id='up-button' onClick={this.handleTopButtonClick}>^</div>
         <Footer />
       </div>
     );
