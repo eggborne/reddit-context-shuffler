@@ -209,14 +209,14 @@ class App extends React.Component {
 
   }
 
-  handleClickRandomImageSource() {
+  handleClickRandomImageSource(event) {
     event.preventDefault();
     let source = Array.from(document.getElementsByName('reddit-source'));
     let newValue = randomImageSources[Util.randomInt(0, randomImageSources.length - 1)];
     source[0].value = newValue;
   }
 
-  handleClickRandomCommentSource() {
+  handleClickRandomCommentSource(event) {
     event.preventDefault();
     let source = Array.from(document.getElementsByName('reddit-source'));
     let newValue = randomCommentSources[Util.randomInt(0, randomCommentSources.length - 1)];
