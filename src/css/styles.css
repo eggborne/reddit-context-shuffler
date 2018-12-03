@@ -20,6 +20,7 @@ button {
   padding: 0.3rem;
   background-color: #555;
   color: white;
+  cursor: pointer;
 }
 .post-display {
   background-size: 100%;
@@ -73,6 +74,7 @@ button {
   align-items: center;
   justify-content: center;
   transition: 300ms ease;
+  cursor: pointer;
 }
 .on-screen {
   bottom: 1rem !important;
